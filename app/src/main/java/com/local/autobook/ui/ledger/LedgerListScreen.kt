@@ -29,7 +29,8 @@ fun LedgerListScreen(
     repository: TransactionRepository,
     onAddClick: () -> Unit,
     onEditClick: (Long) -> Unit,
-    onPendingClick: () -> Unit
+    onPendingClick: () -> Unit,
+    onPermissionClick: () -> Unit
 ) {
     val viewModel: LedgerViewModel = viewModel(
         factory = LedgerViewModel.factory(repository)
@@ -40,7 +41,8 @@ fun LedgerListScreen(
         state = state,
         onAddClick = onAddClick,
         onEditClick = onEditClick,
-        onPendingClick = onPendingClick
+        onPendingClick = onPendingClick,
+        onPermissionClick = onPermissionClick
     )
 }
 
@@ -49,7 +51,8 @@ private fun LedgerListContent(
     state: LedgerUiState,
     onAddClick: () -> Unit,
     onEditClick: (Long) -> Unit,
-    onPendingClick: () -> Unit
+    onPendingClick: () -> Unit,
+    onPermissionClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -76,6 +79,9 @@ private fun LedgerListContent(
         }
         Button(onClick = onPendingClick) {
             Text(text = "\u5f85\u786e\u8ba4")
+        }
+        Button(onClick = onPermissionClick) {
+            Text(text = "\u6743\u9650\u5f15\u5bfc")
         }
 
         if (state.transactions.isEmpty()) {

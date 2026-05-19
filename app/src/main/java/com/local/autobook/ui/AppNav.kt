@@ -1,6 +1,7 @@
 package com.local.autobook.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
@@ -12,6 +13,8 @@ import com.local.autobook.repository.PendingTransactionRepository
 import com.local.autobook.ui.edit.TransactionEditScreen
 import com.local.autobook.ui.ledger.LedgerListScreen
 import com.local.autobook.ui.pending.PendingConfirmScreen
+import com.local.autobook.ui.permission.PermissionGuideScreen
+import com.local.autobook.ui.permission.PermissionSettingsNavigator
 
 @Composable
 fun AppNav(
@@ -20,13 +23,34 @@ fun AppNav(
     startRoute: String = "ledger"
 ) {
     val navController: NavHostController = rememberNavController()
+    val context = LocalContext.current
     NavHost(navController = navController, startDestination = startRoute) {
         composable("ledger") {
             LedgerListScreen(
                 repository = repository,
                 onAddClick = { navController.navigate("edit/new") },
                 onEditClick = { id -> navController.navigate("edit/$id") },
-                onPendingClick = { navController.navigate("pending") }
+                onPendingClick = { navController.navigate("pending") },
+                onPermissionClick = { navController.navigate("permission") }
+            )
+        }
+        composable("permission") {
+            PermissionGuideScreen(
+                onOpenAccessibilitySettings = {
+                    context.startActivity(
+                        android.content.Intent(
+                            PermissionSettingsNavigator.accessibilitySettingsAction()
+                        )
+                    )
+                },
+                onOpenNotificationSettings = {
+                    context.startActivity(
+                        android.content.Intent(
+                            PermissionSettingsNavigator.notificationListenerSettingsAction()
+                        )
+                    )
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable("pending") {
