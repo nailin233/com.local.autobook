@@ -2,6 +2,7 @@ package com.local.autobook.detection
 
 class WeChatPaymentDetector : PaymentDetector {
     override fun parse(text: String): DetectedPayment? {
+        if (!looksLikeWeChatPayment(text)) return null
         val amountCents = PaymentTextParser.extractAmountCents(text) ?: return null
         val normalized = PaymentTextParser.compactText(text)
         val direction = when {
@@ -23,4 +24,11 @@ class WeChatPaymentDetector : PaymentDetector {
             rawSummary = normalized
         )
     }
+
+    private fun looksLikeWeChatPayment(text: String): Boolean =
+        text.contains("微信") ||
+            text.contains("收款到账") ||
+            text.contains("收款方") ||
+            text.contains("退款成功") ||
+            text.contains("微信支付")
 }

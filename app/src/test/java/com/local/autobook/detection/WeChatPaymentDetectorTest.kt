@@ -25,5 +25,6 @@ class WeChatPaymentDetectorTest {
     @Test
     fun parse_withoutAmount_returnsNull() {
         assertNull(WeChatPaymentDetector().parse("支付成功"))
+        assertNull(WeChatPaymentDetector().parse("Modex Agent(35条新消息)"))
     }
 }

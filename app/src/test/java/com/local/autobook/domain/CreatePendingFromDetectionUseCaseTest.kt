@@ -21,7 +21,7 @@ class CreatePendingFromDetectionUseCaseTest {
 
         assertEquals(1, store.inserted.size)
         assertEquals(store.inserted.single(), created)
-        assertEquals("WECHAT|1299|EXPENSE|coffee|28500000", created?.dedupeKey)
+        assertEquals("WECHAT|1299|EXPENSE|coffee|summary", created?.dedupeKey)
     }
 
     @Test
@@ -37,7 +37,7 @@ class CreatePendingFromDetectionUseCaseTest {
             occurredAt = 1710000000000L,
             confidence = "CLEAR",
             rawSummary = "summary",
-            dedupeKey = "WECHAT|1299|EXPENSE|coffee|28500000",
+            dedupeKey = "WECHAT|1299|EXPENSE|coffee|summary",
             createdAt = 1710000000000L
         )
         val store = FakeCreatePendingStore(recentDuplicate = duplicate)

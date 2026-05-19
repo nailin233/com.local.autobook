@@ -2,6 +2,7 @@ package com.local.autobook.detection
 
 class AlipayPaymentDetector : PaymentDetector {
     override fun parse(text: String): DetectedPayment? {
+        if (!looksLikeAlipayPayment(text)) return null
         val amountCents = PaymentTextParser.extractAmountCents(text) ?: return null
         val normalized = PaymentTextParser.compactText(text)
         val direction = when {
@@ -23,4 +24,11 @@ class AlipayPaymentDetector : PaymentDetector {
             rawSummary = normalized
         )
     }
+
+    private fun looksLikeAlipayPayment(text: String): Boolean =
+        text.contains("支付宝") ||
+            text.contains("商家") ||
+            text.contains("收款到账") ||
+            text.contains("退款到账") ||
+            text.contains("支付宝支付")
 }

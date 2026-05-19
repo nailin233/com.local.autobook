@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 class PaymentDeduplicatorTest {
     @Test
-    fun buildDedupeKey_usesSourceAmountDirectionMerchantAndMinuteBucket() {
+    fun buildDedupeKey_usesSourceAmountDirectionMerchantAndSummary() {
         val payment = DetectedPayment(
             amountCents = 1299L,
             direction = "EXPENSE",
@@ -21,7 +21,7 @@ class PaymentDeduplicatorTest {
 
         val key = PaymentDeduplicator().buildDedupeKey(payment)
 
-        assertEquals("WECHAT|1299|EXPENSE|coffee shop|28500001", key)
+        assertEquals("WECHAT|1299|EXPENSE|coffee shop|summary", key)
     }
 
     @Test

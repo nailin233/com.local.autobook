@@ -7,7 +7,7 @@ class PaymentDeduplicator {
             payment.amountCents.toString(),
             payment.direction,
             payment.merchant.normalizeMerchant(),
-            (payment.occurredAt / MINUTE_MILLIS).toString()
+            payment.rawSummary.normalizeSummary()
         ).joinToString("|")
     }
 
@@ -24,6 +24,9 @@ class PaymentDeduplicator {
 
     private fun String.normalizeMerchant(): String =
         trim().lowercase().replace(Regex("\\s+"), " ")
+
+    private fun String.normalizeSummary(): String =
+        trim().lowercase().replace(Regex("\\s+"), "")
 
     companion object {
         const val MINUTE_MILLIS = 60_000L

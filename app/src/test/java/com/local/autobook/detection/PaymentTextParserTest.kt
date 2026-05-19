@@ -16,5 +16,6 @@ class PaymentTextParserTest {
     @Test
     fun extractAmount_returnsNullWhenNoAmountExists() {
         assertNull(PaymentTextParser.extractAmountCents("支付成功"))
+        assertNull(PaymentTextParser.extractAmountCents("Modex Agent(35条新消息)"))
     }
 }

@@ -1,7 +1,7 @@
 package com.local.autobook.detection
 
 object PaymentTextParser {
-    private val amountPattern = Regex("""(?:¥|￥)?\s*(\d+(?:\.\d{1,2})?)\s*元?|(?:¥|￥)\s*(\d+(?:\.\d{1,2})?)""")
+    private val amountPattern = Regex("""(?:¥|￥)\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*元""")
     private val whitespacePattern = Regex("\\s+")
 
     fun extractAmountCents(text: String): Long? {
