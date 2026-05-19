@@ -8,7 +8,7 @@ import com.local.autobook.AutoBookApp
 class PaymentAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         val app = application as? AutoBookApp ?: return
-        app.container.notificationPaymentProcessor.processAccessibilityText(
+        app.container.notificationPaymentProcessor.processAccessibilityEvent(
             eventTexts(event) + windowTexts(rootInActiveWindow)
         )
     }

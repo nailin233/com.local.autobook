@@ -13,39 +13,52 @@ class NotificationPaymentProcessor(
 ) {
     private val recentSignatures = LinkedHashMap<String, Long>()
     private val duplicateWindowMillis = 5_000L
+    private var lastNotificationEventAt = 0L
+    private val notificationPrimaryWindowMillis = 120_000L
 
-    fun process(text: String, source: String) {
-        val normalized = text.trim()
-        if (normalized.isBlank()) return
+    fun processNotificationEvent(notificationKey: String?, title: String?, text: String?, bigText: String?) {
+        lastNotificationEventAt = System.currentTimeMillis()
+        processFragments(
+            source = "NOTIFICATION",
+            fragments = sequenceOf(title, text, bigText).filterNotNull().toList()
+        )
+    }
+
+    fun processAccessibilityEvent(texts: List<String?>) {
+        val now = System.currentTimeMillis()
+        if (now - lastNotificationEventAt < notificationPrimaryWindowMillis) return
+        processFragments(
+            source = "ACCESSIBILITY",
+            fragments = texts
+        )
+    }
+
+    private fun processFragments(source: String, fragments: List<String?>) {
+        val normalizedFragments = fragments
+            .asSequence()
+            .filterNotNull()
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .toList()
+        if (normalizedFragments.isEmpty()) return
+
+        val rawSummary = normalizedFragments.joinToString(" ")
 
         scope.launch {
             detectors.asSequence()
-                .mapNotNull { it.parse(normalized) }
+                .mapNotNull { it.parse(rawSummary) }
                 .firstOrNull()
                 ?.let { detected ->
-                    val candidate = detected.copy(detectedFrom = source, rawSummary = normalized)
-                    if (accept(candidate)) {
+                    val candidate = detected.copy(detectedFrom = source, rawSummary = rawSummary)
+                    if (accept(candidate.contentSignature())) {
                         createPending(candidate)
                     }
                 }
         }
     }
 
-    fun processNotificationText(title: String?, text: String?, bigText: String?) {
-        sequenceOf(title, text, bigText)
-            .filterNotNull()
-            .forEach { process(it, "NOTIFICATION") }
-    }
-
-    fun processAccessibilityText(texts: List<String?>) {
-        texts.asSequence()
-            .filterNotNull()
-            .forEach { process(it, "ACCESSIBILITY") }
-    }
-
-    private fun accept(payment: DetectedPayment): Boolean {
+    private fun accept(signature: String): Boolean {
         val now = System.currentTimeMillis()
-        val signature = payment.signature()
         synchronized(recentSignatures) {
             prune(now)
             val lastSeen = recentSignatures[signature]
@@ -67,7 +80,7 @@ class NotificationPaymentProcessor(
         }
     }
 
-    private fun DetectedPayment.signature(): String =
+    private fun DetectedPayment.contentSignature(): String =
         listOf(
             paymentSource,
             amountCents.toString(),

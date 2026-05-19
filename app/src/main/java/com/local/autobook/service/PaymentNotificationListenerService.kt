@@ -8,7 +8,8 @@ class PaymentNotificationListenerService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         val app = application as? AutoBookApp ?: return
         val extras = sbn?.notification?.extras
-        app.container.notificationPaymentProcessor.processNotificationText(
+        app.container.notificationPaymentProcessor.processNotificationEvent(
+            notificationKey = sbn?.key,
             title = extras?.getCharSequence("android.title")?.toString(),
             text = extras?.getCharSequence("android.text")?.toString(),
             bigText = extras?.getCharSequence("android.bigText")?.toString()
