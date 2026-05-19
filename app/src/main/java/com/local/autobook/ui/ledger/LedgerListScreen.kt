@@ -28,7 +28,8 @@ import com.local.autobook.data.repository.TransactionRepository
 fun LedgerListScreen(
     repository: TransactionRepository,
     onAddClick: () -> Unit,
-    onEditClick: (Long) -> Unit
+    onEditClick: (Long) -> Unit,
+    onPendingClick: () -> Unit
 ) {
     val viewModel: LedgerViewModel = viewModel(
         factory = LedgerViewModel.factory(repository)
@@ -38,7 +39,8 @@ fun LedgerListScreen(
     LedgerListContent(
         state = state,
         onAddClick = onAddClick,
-        onEditClick = onEditClick
+        onEditClick = onEditClick,
+        onPendingClick = onPendingClick
     )
 }
 
@@ -46,7 +48,8 @@ fun LedgerListScreen(
 private fun LedgerListContent(
     state: LedgerUiState,
     onAddClick: () -> Unit,
-    onEditClick: (Long) -> Unit
+    onEditClick: (Long) -> Unit,
+    onPendingClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -70,6 +73,9 @@ private fun LedgerListContent(
             Button(onClick = onAddClick) {
                 Text(text = "\u65b0\u589e")
             }
+        }
+        Button(onClick = onPendingClick) {
+            Text(text = "\u5f85\u786e\u8ba4")
         }
 
         if (state.transactions.isEmpty()) {

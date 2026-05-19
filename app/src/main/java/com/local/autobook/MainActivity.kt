@@ -24,5 +24,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun AppRoot(app: AutoBookApp) {
-    AppNav(repository = app.container.transactionRepository)
+    AppNav(
+        repository = app.container.transactionRepository,
+        pendingRepository = app.container.pendingTransactionRepository
+    )
 }
