@@ -48,4 +48,26 @@ class NotificationPaymentProcessorTest {
         assertEquals("ACCESSIBILITY", created.single().detectedFrom)
         assertEquals("Starbucks", created.single().merchant)
     }
+
+    @Test
+    fun duplicateSignature_withinWindow_isSuppressed() {
+        val created = mutableListOf<DetectedPayment>()
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+        val processor = NotificationPaymentProcessor(
+            createPending = { created += it },
+            detectors = listOf(WeChatPaymentDetector(), AlipayPaymentDetector()),
+            scope = scope
+        )
+
+        processor.processNotificationText(
+            title = "微信支付成功",
+            text = "微信支付成功88.90元收款方DailyShop",
+            bigText = null
+        )
+        processor.processAccessibilityText(
+            listOf("微信支付成功88.90元收款方DailyShop")
+        )
+
+        assertEquals(1, created.size)
+    }
 }
